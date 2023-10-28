@@ -336,17 +336,17 @@ shinyServer(function(input, output) {
   #################################################
   #########Other: Citizenship##############
   ################################################
-  output$citizenship <- renderDT(
-    citizenship ,
-    extensions = "Buttons", 
-    options = list(dom = "Blfrtip", 
-                   buttons = c("copy", "csv", "excel", "pdf", "print"), 
-                   pageLength = 10,
-                   lengthMenu = list(c(10, 50, 100, 150, 200, -1), 
-                                     list("10", "50", "100", "150", "200", "All")), paging = T),
-    class = "display nowrap compact",
-    filter = "top"
-  )
+  # output$citizenship <- renderDT(
+  #   citizenship ,
+  #   extensions = "Buttons", 
+  #   options = list(dom = "Blfrtip", 
+  #                  buttons = c("copy", "csv", "excel", "pdf", "print"), 
+  #                  pageLength = 10,
+  #                  lengthMenu = list(c(10, 50, 100, 150, 200, -1), 
+  #                                    list("10", "50", "100", "150", "200", "All")), paging = T),
+  #   class = "display nowrap compact",
+  #   filter = "top"
+  # )
   
   
   

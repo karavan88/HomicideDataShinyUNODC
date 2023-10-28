@@ -72,9 +72,9 @@ hom_prisons_dat$Indicator = factor(hom_prisons_dat$Indicator)
 hom_prisons_dat$Country = factor(hom_prisons_dat$Country)  
 
 #Data for citizenship
-citizenship <<- read_csv("citizenship.csv")
-citizenship$Indicator = factor(citizenship$Indicator) 
-citizenship$Country = factor(citizenship$Country)
+# citizenship <<- read_csv("citizenship.csv")
+# citizenship$Indicator = factor(citizenship$Indicator) 
+# citizenship$Country = factor(citizenship$Country)
 
 
 #DATASET for criminal justice response
