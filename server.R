@@ -88,7 +88,6 @@ shinyServer(function(input, output) {
     }
   )
   
-  
   #################SECOND PAGE###############################
   
   output$textforcountrydataexp <- renderText({

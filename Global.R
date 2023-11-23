@@ -12,15 +12,25 @@ library(leaflet.extras)
 library(leaflet.minicharts)
 library(readr) 
 library(tidyr)
+library(classInt)
+library(RColorBrewer)
+
+
 
 #DATASET for a country map
-country_map_data <<- read_csv("Country_Map.csv")
+country_map_data <<- 
+  read_csv("Country_Map.csv") 
+
 country_map_data$Variable <- factor(country_map_data$Variable)
 vars_for_hom_map = unique(country_map_data$Variable)
 Gender = c("Male Homicide Rate", "Female Homicide Rate")
 Male_by_Age = c("Male 0-14 Rate", "Male 15-29 Rate", "Male 30-44 Rate", "Male 45-59 Rate", "Male 60 or more Rate")
 Female_by_Age = c("Female 0-14 Rate", "Female 15-29 Rate", "Female 30-44 Rate", "Female 45-59 Rate", "Female 60 or more Rate")                                           
 Mechanism = c("Firearms Rate", "Sharp Objects Rate", "Other Mechanism Rate")        
+
+
+
+
 
 
 #DATASET for the country data table
