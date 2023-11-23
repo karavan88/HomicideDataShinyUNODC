@@ -5,7 +5,11 @@ account: karavan88
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 10421105
+<<<<<<< HEAD
 bundleId: 7943271
+=======
+bundleId: 7962666
+>>>>>>> choroplet
 url: https://karavan88.shinyapps.io/homicide_data_shiny_app/
 version: 1
 asMultiple: FALSE

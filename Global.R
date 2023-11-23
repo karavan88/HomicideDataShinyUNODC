@@ -10,10 +10,28 @@ library(leaflet.extras)
 library(leaflet.minicharts)
 library(readr) 
 library(tidyr)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(sf)
 
 #DATASET for a country map
-country_map_data <<- read_csv("Country_Map.csv")
+country_map_data <<- read_csv("01_input_data/Country_Map.csv")
 country_map_data$Variable <- factor(country_map_data$Variable)
+
+#DATASET for a country map
+country_map_data <<- 
+  read_csv("01_input_data/Country_Map.csv") %>%  
+  mutate(iso_a3 = countrycode::countrycode(code, destination = "iso3c", 
+                                           origin = "iso2c"))
+
+world <- ne_countries(scale = 110, type = 'countries', returnclass = "sf")
+
+# Merge your data with the shapefile data
+# Ensure that 'join_field' is the name of the common identifier in your dataset
+# For example, it might be 'iso_a3' for the ISO alpha-3 country code
+merged_data <- inner_join(world, country_map_data)
+
+
 vars_for_hom_map = unique(country_map_data$Variable)
 Gender = c("Male Homicide Rate", "Female Homicide Rate")
 Male_by_Age = c("Male 0-14 Rate", "Male 15-29 Rate", "Male 30-44 Rate", "Male 45-59 Rate", "Male 60 or more Rate")
@@ -22,7 +40,7 @@ Mechanism = c("Firearms Rate", "Sharp Objects Rate", "Other Mechanism Rate")
 
 
 #DATASET for the country data table
-shiny_dt <<- read_csv("Shiny_DT.csv") 
+shiny_dt <<- read_csv("01_input_data/Shiny_DT.csv") 
 
 #we need to produce values for inputs
 countries <- unique(shiny_dt$Country)
@@ -37,21 +55,21 @@ mech_gender_hom = variables[c(35:50)]
 ###########new
 
 #DATASET for regional and subregional data table
-shiny_reg_dt <<- read_csv("shiny_reg_dt.csv") 
+shiny_reg_dt <<- read_csv("01_input_data/shiny_reg_dt.csv") 
 reg_vars <- unique(shiny_reg_dt$Indicator)
 reg_regions <- unique(shiny_reg_dt$`Region/Subregion`) #this object will not  be used in the UI
 subregions1 = reg_regions[7:28]
 subregions = subregions1[-c(5,8,9,10,11,14,17,20)]
 
 #DATASET for regional map
-regmap <<- read_csv("regmap.csv")
+regmap <<- read_csv("01_input_data/regmap.csv")
 regvarsmap <- names(regmap)[3:19]
 regmap <- regmap %>%
   mutate_if(is.numeric, round, (0))
 
 ####------works
 #DATASET for time-series plot
-ts_data <<- read_csv("TS_plot_countries.csv")
+ts_data <<- read_csv("01_input_data/TS_plot_countries.csv")
 ts_data <- ts_data %>% mutate_if(is.numeric, round, 3)
 ts_vars <- names(ts_data)
 ts_vars <- ts_vars[c(5:21)]
@@ -59,7 +77,7 @@ ts_countries <- sort(countries, decreasing = F)
 
 
 #Data for Homicide in prisons
-hom_prisons_dat <<- Homicide_in_Prisons_Shiny <- read_csv("Homicide in Prisons Shiny.csv", 
+hom_prisons_dat <<- Homicide_in_Prisons_Shiny <- read_csv("01_input_data/Homicide in Prisons Shiny.csv", 
                                                           col_types = cols(`2010` = col_character(), 
                                                                            `2011` = col_character(), `2012` = col_character(), 
                                                                            `2013` = col_character(), `2014` = col_character(), 
@@ -76,7 +94,7 @@ hom_prisons_dat$Country = factor(hom_prisons_dat$Country)
 
 
 #DATASET for criminal justice response
-cjsr <<- read.csv('cjsr.csv', check.names = T, header = T)
+cjsr <<- read.csv('01_input_data/cjsr.csv', check.names = T, header = T)
 
 #rename var names to get rid of X in front of each year
 names(cjsr)[4] <- "2003"
@@ -96,7 +114,7 @@ names(cjsr)[17] <- "2016"
 names(cjsr)[18] <- "2017"
 
 #Dataset for ipfm
-ipfm <<- read.csv("ipfm_shiny.csv")
+ipfm <<- read.csv("01_input_data/ipfm_shiny.csv")
 
 names(ipfm)[4] <- "2005"
 names(ipfm)[5] <- "2006"
@@ -114,7 +132,7 @@ names(ipfm)[16] <- "2017"
 
 #Crime-Related Homicide
 
-crime_hom <<- read.csv("crime related hom.csv")
+crime_hom <<- read.csv("01_input_data/crime related hom.csv")
 
 names(crime_hom)[4] <- "2005"
 names(crime_hom)[5] <- "2006"

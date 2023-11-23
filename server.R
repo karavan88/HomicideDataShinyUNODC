@@ -25,9 +25,10 @@ shinyServer(function(input, output) {
   
   #create reactive dataset for mapping
   maphom <- reactive({
-    country_map_data %>%
+    #merged_data %>%
+    merged_data %>%
       filter(Year == input$sliderMapYear & Variable == input$IndicatorMap) %>% 
-      tidyr::drop_na(Value)  
+      tidyr::drop_na(Value) 
   }) 
   
   # we need to create an empty map
@@ -35,46 +36,51 @@ shinyServer(function(input, output) {
   
   #Create map
   
-  homicide_map <- reactive({ 
+  # Define your reactive homicide_map
+  homicide_map <- reactive({
+    # Assuming country_map_data is a reactive expression, it should be called as a function
+    # Get the data from the maphom() reactive expression
+    data_for_map <- maphom()
+    
+    num_intervals <- 5
+    data_for_map$Value_log <- log(data_for_map$Value + 1)
+    
+    # Calculate quantile breaks on the transformed data
+    quantile_breaks_log <- classInt::classIntervals(data_for_map$Value_log, n = num_intervals, style = "quantile")
+    
+    # Create a color palette based on the transformed data
+    pal <- colorNumeric(palette = colorRampPalette(c("blue", "red"))(num_intervals), domain = quantile_breaks_log$brks)
     
     
-    leaflet(data = maphom(), options = leafletOptions(minZoom = 1.3)) %>% 
+    # Now create the leaflet map
+    leaflet(data = data_for_map) %>% 
       addProviderTiles(provider = "Esri.WorldShadedRelief") %>%
-      addCircleMarkers(lng =  ~long, lat = ~lat, 
-                       radius = ~(Value/2), 
-                       color = "red", 
-                       label = ~paste0(Country, ", ", Variable, ", ", Value, ""),
-                       opacity = 0.4,
-                       group = "circles") %>%
-      addMarkers(
-        data = maphom(), 
-        lng =  ~long, lat = ~lat,  
-        label = ~paste0(Country), 
-        popup = ~paste0(Country, ", ", Year, ", ", Variable, ", ",  Value, ""),
-        group = "maphom()",
-        icon = makeIcon( 
-          iconUrl = "http://leafletjs.com/examples/custom-icons/leaf-green.png",
-          iconWidth = 1, iconHeight = 1
-        )) %>%  
-      
-      setView(lat = 25.664, lng = 20.303, zoom = 1.8) %>%
-      setMaxBounds(lng1 = -175,
-                   lat1 = 80,
-                   lng2 = 175,
-                   lat2 = -66) %>%
-      addSearchFeatures(targetGroups = 'maphom()',  
-                        options = searchFeaturesOptions(
-                          zoom=6, openPopup = TRUE, firstTipSubmit = TRUE,
-                          autoCollapse = TRUE, hideMarkerOnCollapse = TRUE )) %>%
-      addResetMapButton() 
-    
+      addPolygons(
+        fillColor = ~pal(Value),
+        weight = 2,
+        opacity = 1,
+        color = 'white',
+        dashArray = '3',
+        fillOpacity = 0.7,
+        highlightOptions = highlightOptions(
+          weight = 5,
+          color = '#666',
+          dashArray = '',
+          fillOpacity = 0.7,
+          bringToFront = TRUE
+        ),
+        label = ~paste0(Country, ", ", Variable, ", ", Value, ""),
+        smoothFactor = 0.5
+      ) %>%
+      setView(lat = 25.664, lng = 20.303, zoom = 1.8)
+    # other map options...
   })
   
+  # Then you render your homicide_map in the UI with renderLeaflet
   output$homicide_map <- renderLeaflet({
-    
-    homicide_map() 
-    
+    homicide_map() # Call the reactive homicide_map to render it
   })
+  
   
   output$savemap <- downloadHandler(
     
@@ -138,7 +144,7 @@ shinyServer(function(input, output) {
     }
   )
   
-  #--------from here new - this might mnot
+
   
   ##############################------THIRD NAVBAR PANEL------------################
   #########First Tabset
@@ -332,21 +338,6 @@ shinyServer(function(input, output) {
     class = "display nowrap compact",
     filter = "top"
   )
-  
-  #################################################
-  #########Other: Citizenship##############
-  ################################################
-  # output$citizenship <- renderDT(
-  #   citizenship ,
-  #   extensions = "Buttons", 
-  #   options = list(dom = "Blfrtip", 
-  #                  buttons = c("copy", "csv", "excel", "pdf", "print"), 
-  #                  pageLength = 10,
-  #                  lengthMenu = list(c(10, 50, 100, 150, 200, -1), 
-  #                                    list("10", "50", "100", "150", "200", "All")), paging = T),
-  #   class = "display nowrap compact",
-  #   filter = "top"
-  # )
   
   
   
