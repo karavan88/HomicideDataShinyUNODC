@@ -1,4 +1,4 @@
-ui <- navbarPage(title = "Homicide Dataset 2019",
+ui <- navbarPage(title = "UNODC Global Study on Homicide 2019",
                  #windowTitle = "UNODC Global Study on Homicide 2019",
                  
                  
@@ -240,11 +240,6 @@ ui <- navbarPage(title = "Homicide Dataset 2019",
                             tabPanel("Homicide in Prisons",
                                      h4("Data on Homicide in Prisons"),
                                      dataTableOutput("prisons")
-                            ),
-                            
-                            tabPanel("Homicide by Citizenship",
-                                     h4("Data on Homicide by Citizenship"),
-                                     dataTableOutput("citizenship")
                             ) #closes tabpanel on citizens
                  )#, #closes navbarMenu
 
